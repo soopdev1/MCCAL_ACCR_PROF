@@ -1,7 +1,7 @@
-<%@page import="com.seta.action.Constant"%>
-<%@page import="com.seta.action.ActionB"%>
+<%@page import="rc.so.action.Constant"%>
+<%@page import="rc.so.action.ActionB"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="com.seta.entity.Registrazione"%>
+<%@page import="rc.so.entity.Registrazione"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
@@ -13,7 +13,7 @@
 
     <head>
         <meta charset="utf-8" />
-        <title>YES I START UP CALABRIA - Donne e Disoccupati</title>
+        <title><%=Constant.NAMEAPP%></title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="" name="description" />

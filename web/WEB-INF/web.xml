@@ -4,23 +4,23 @@
     <distributable/>
     <servlet>
         <servlet-name>LoginOperations</servlet-name>
-        <servlet-class>com.seta.servlet.LoginOperations</servlet-class>
+        <servlet-class>rc.so.servlet.LoginOperations</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Download</servlet-name>
-        <servlet-class>com.seta.servlet.Download</servlet-class>
+        <servlet-class>rc.so.servlet.Download</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Query</servlet-name>
-        <servlet-class>com.seta.servlet.Query</servlet-class>
+        <servlet-class>rc.so.servlet.Query</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Operazioni</servlet-name>
-        <servlet-class>com.seta.servlet.Operazioni</servlet-class>
+        <servlet-class>rc.so.servlet.Operazioni</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Upload</servlet-name>
-        <servlet-class>com.seta.servlet.Upload</servlet-class>
+        <servlet-class>rc.so.servlet.Upload</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>LoginOperations</servlet-name>

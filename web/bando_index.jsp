@@ -4,13 +4,14 @@
     Author     : rcosco
 --%>
 
-<%@page import="com.seta.entity.Domandecomplete"%>
-<%@page import="com.seta.entity.Docbandi"%>
-<%@page import="com.seta.entity.Docuserbandi"%>
+<%@page import="rc.so.action.Constant"%>
+<%@page import="rc.so.entity.Domandecomplete"%>
+<%@page import="rc.so.entity.Docbandi"%>
+<%@page import="rc.so.entity.Docuserbandi"%>
 <%@page import="java.util.ArrayList"%>
-<%@page import="com.seta.action.Liste"%>
-<%@page import="com.seta.action.ActionB"%>
-<%@page import="com.seta.util.Utility"%>
+<%@page import="rc.so.action.Liste"%>
+<%@page import="rc.so.action.ActionB"%>
+<%@page import="rc.so.util.Utility"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <%
@@ -21,7 +22,7 @@
 <html>
     <head>
         <meta charset="utf-8" />
-        <title>YES I START UP CALABRIA - Donne e Disoccupati</title>
+        <title><%=Constant.NAMEAPP%></title>
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta content="width=device-width, initial-scale=1" name="viewport" />
         <meta content="" name="description" />
@@ -1175,7 +1176,7 @@
             <!-- END CONTAINER -->
             <!-- BEGIN FOOTER -->
             <div class="page-footer">
-                <div class="page-footer-inner"> YES I START UP CALABRIA - Donne e Disoccupati v. 1.0.0</div>
+                <div class="page-footer-inner"> <%=Constant.NAMEAPP%> v. 1.0.0</div>
                 <div class="scroll-to-top">
                     <i class="icon-arrow-up"></i>
                 </div>

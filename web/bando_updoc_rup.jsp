@@ -1,11 +1,11 @@
-<%@page import="com.seta.entity.Domandecomplete"%>
-<%@page import="com.seta.entity.Docuserbandi"%>
-<%@page import="com.seta.entity.Docbandi"%>
-<%@page import="com.seta.action.ActionB"%>
-<%@page import="com.seta.util.Utility"%>
+<%@page import="rc.so.entity.Domandecomplete"%>
+<%@page import="rc.so.entity.Docuserbandi"%>
+<%@page import="rc.so.entity.Docbandi"%>
+<%@page import="rc.so.action.ActionB"%>
+<%@page import="rc.so.util.Utility"%>
 <!DOCTYPE html>
 <%@page import="java.util.ArrayList"%>
-<%@page import="com.seta.action.Label"%>
+<%@page import="rc.so.action.Label"%>
 
 <!--[if IE 8]> <html lang="en" class="ie8 no-js"> <![endif]-->
 <!--[if IE 9]> <html lang="en" class="ie9 no-js"> <![endif]-->
