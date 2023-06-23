@@ -25,6 +25,8 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import static rc.so.action.ActionB.getPath;
+import rc.so.db.Db_Bando;
 
 /**
  *
@@ -46,15 +48,20 @@ public class SendMailJet {
         String content_type = "";
         String b64 = "";
 
+        Db_Bando db1 = new Db_Bando();
+        String mailjet_api = db1.getPath("mailjet_api");
+        String mailjet_secret = db1.getPath("mailjet_secret");
+        String mailjet_name = db1.getPath("mailjet_name");
+        db1.closeDB();
+
         ClientOptions options = builder()
-                .apiKey("843f15d68bd377c99d9c4f494c6f2f1f")
-                .apiSecretKey("f842a4c3439997bf53616334c162581d")
+                .apiKey(mailjet_api)
+                .apiSecretKey(mailjet_secret)
                 .build();
 
         client = new MailjetClient(options);
 
 //        client.setDebug(1);
-
         JSONArray dest = new JSONArray();
         JSONArray ccn = new JSONArray();
         JSONArray ccj = new JSONArray();
@@ -79,8 +86,14 @@ public class SendMailJet {
                     .put("Name", ""));
         }
 
+//        try {
+//            ccn.put(new JSONObject().put("Email", getPath("mail.bcc"))
+//                    .put("Name", ""));
+//        } catch (Exception ee1) {
+//        }
+
         JSONObject mail = new JSONObject().put(Emailv31.Message.FROM, new JSONObject()
-                .put("Email", "yisucal.supporto@microcredito.gov.it")
+                .put("Email", mailjet_name)
                 .put("Name", name))
                 .put(Emailv31.Message.TO, dest)
                 .put(Emailv31.Message.CC, ccj)
@@ -92,7 +105,7 @@ public class SendMailJet {
             try {
                 filename = file.getName();
                 content_type = Files.probeContentType(file.toPath());
-                try (InputStream i = new FileInputStream(file)) {
+                try ( InputStream i = new FileInputStream(file)) {
                     b64 = new String(Base64.encodeBase64(IOUtils.toByteArray(i)));
                 }
             } catch (IOException ex) {
