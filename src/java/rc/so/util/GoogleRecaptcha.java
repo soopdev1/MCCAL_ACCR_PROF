@@ -54,14 +54,15 @@ public class GoogleRecaptcha {
             response.append(inputLine);
         }
         in.close();
-        System.out.println(response.toString());
+//        System.out.println(response.toString());
         JSONParser parser = new JSONParser();
         JSONObject json = (JSONObject) parser.parse(response.toString());
         Boolean success = (Boolean) json.get("success");
-        Double score = (Double) json.get("score");
+//        Double score = (Double) json.get("score");
         boolean ctrl1 = success;
-        boolean ctrl2 = score >= 0.5;
-        return (ctrl1 && ctrl2);
+//        boolean ctrl2 = score >= 0.5;
+//        return (ctrl1 && ctrl2);
+        return ctrl1;
     }
     
 }

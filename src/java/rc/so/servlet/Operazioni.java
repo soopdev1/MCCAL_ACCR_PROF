@@ -189,7 +189,6 @@ public class Operazioni extends HttpServlet {
                                                 String dest[] = {email};
                                                 String text = ActionB.getPath("mailreg").replaceAll("@username", username).replaceAll("@password", pass);
                                                 if (!text.equals("-")) {
-//                                                        boolean es = sendMailHtml(dest, "Registrazione", text, null);
                                                     try {
                                                         boolean es = SendMailJet.sendMail(NAMEAPP, dest, new String[]{}, text, NAMEAPP + " - Registrazione");
                                                         if (es) {
@@ -211,13 +210,11 @@ public class Operazioni extends HttpServlet {
                     }
                 } else {
                     trackingAction("service", "registraUtente - Error: ROBOT GOOGLE");
-                    redirect(request, response, "home.jsp?esito=okr1");
+                    redirect(request, response, "bando_reg.jsp?esito=KO1&bando=" + bandorif);
                 }
-            } catch (FileUploadException ex) {
+            } catch (Exception ex) {
                 trackingAction("service", "registraUtente - Error: " + ex.getMessage());
-                Constant.log.severe(bando + ": " + ex.getMessage());
-            } catch (ParseException ex) {
-                Logger.getLogger(Operazioni.class.getName()).log(Level.SEVERE, null, ex);
+                Constant.log.log(Level.SEVERE,bando + ": {0}", ex.getMessage());
             }
         }
         if (ok) {

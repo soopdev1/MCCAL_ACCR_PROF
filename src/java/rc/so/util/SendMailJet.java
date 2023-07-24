@@ -21,11 +21,13 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import static rc.so.action.ActionB.getPath;
+import rc.so.action.ActionB;
 import rc.so.db.Db_Bando;
 
 /**
@@ -34,12 +36,12 @@ import rc.so.db.Db_Bando;
  */
 public class SendMailJet {
 
-    public static boolean sendMail(String name, String[] to, String[] cc, String txt, String subject) throws MailjetException {
+    public static boolean sendMail(String name, String[] to, String[] cc, String txt, String subject) {
         return sendMail(name, to, cc, txt, subject, null);
 
     }
 
-    public static boolean sendMail(String name, String[] to, String[] cc, String txt, String subject, File file) throws MailjetException {
+    public static boolean sendMail(String name, String[] to, String[] cc, String txt, String subject, File file) {
         MailjetClient client;
         MailjetRequest request;
         MailjetResponse response;
@@ -91,7 +93,6 @@ public class SendMailJet {
 //                    .put("Name", ""));
 //        } catch (Exception ee1) {
 //        }
-
         JSONObject mail = new JSONObject().put(Emailv31.Message.FROM, new JSONObject()
                 .put("Email", mailjet_name)
                 .put("Name", name))
@@ -108,7 +109,8 @@ public class SendMailJet {
                 try ( InputStream i = new FileInputStream(file)) {
                     b64 = new String(Base64.encodeBase64(IOUtils.toByteArray(i)));
                 }
-            } catch (IOException ex) {
+            } catch (Exception ex) {
+                ActionB.trackingAction("Service", ex.getMessage());
                 ex.printStackTrace();
             }
             mail.put(Emailv31.Message.ATTACHMENTS, new JSONArray()
@@ -122,13 +124,21 @@ public class SendMailJet {
                 .property(Emailv31.MESSAGES, new JSONArray()
                         .put(mail));
 
-        response = client.post(request);
-
-        System.out.println(response.getStatus());
-
-        return response.getStatus() == 200;
+        try {
+            response = client.post(request);
+            boolean ok = response.getStatus() == 200;
+            
+            if (!ok) {
+                System.err.println("ERRORE: sendMail - " + response.getStatus() + " -- " + response.getRawResponseContent() + " --- " + response.getData().toList());
+            }
+            
+            return ok;
+        } catch (Exception ex) {
+            ActionB.trackingAction("Service", ex.getMessage());
+            ex.printStackTrace();
+        }
+        return false;
 //        System.out.println(response.getTotal());
-
     }
 
 //    public static void main(String[] args) {
