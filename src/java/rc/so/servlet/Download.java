@@ -369,28 +369,27 @@ public class Download extends HttpServlet {
             Db_Bando dbb = new Db_Bando();
             String pathtemp = dbb.getPath("pathtemp");
             String filePath = dbb.getPathDocModello(bandorif, tipodoc);
-            // PER SVILUPPO
-//            filePath = "C:\\bandoba0h8\\Allegato_C_Dichiarazione_disponibilita.pdf";
-            // PER PRODUZIONE
-            filePath = "/mnt/mcprofessioni/bandoba0h8/Allegato_C_Dichiarazione_disponibilita.pdf";
             File downloadFile = null;
             dbb.closeDB();
-            if (tipodoc.equals("DONL")) {
-                downloadFile = domanda(pathtemp, new File(filePath), bandorif, username);
-            } else if (tipodoc.equals("DONLA")) {
-                // PER SVILUPPO
-                filePath = Pdf_new.compileAllegatoA(username, bando, ActionB.getAllegatoA(username));
-                if (filePath != null) {
+            switch (tipodoc) {
+                case "DONL":
+                    downloadFile = domanda(pathtemp, new File(filePath), bandorif, username);
+                    break;
+                case "DONLA":
+                    // PER SVILUPPO
+                    filePath = Pdf_new.compileAllegatoA(username, bando, ActionB.getAllegatoA(username));
+                    if (filePath != null) {
+                        downloadFile = new File(filePath);
+                    }   break;
+                case "DONLB":
+                    // PER SVILUPPO
+                    filePath = Pdf_new.compileAllegatoB(username, bando, ActionB.getAllegatoA(username));
+                    if (filePath != null) {
+                        downloadFile = new File(filePath);
+                    }   break;
+                default:
                     downloadFile = new File(filePath);
-                }
-            } else if (tipodoc.equals("DONLB")) {
-                // PER SVILUPPO
-                filePath = Pdf_new.compileAllegatoB(username, bando, ActionB.getAllegatoA(username));
-                if (filePath != null) {
-                    downloadFile = new File(filePath);
-                }
-            } else {
-                downloadFile = new File(filePath);
+                    break;
             }
             if (downloadFile != null && downloadFile.exists()) {
                 trackingAction(request.getSession().getAttribute("username").toString(), "Download File (con modello) " + downloadFile.getName());

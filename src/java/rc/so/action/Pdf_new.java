@@ -176,58 +176,58 @@ public class Pdf_new {
             dbb.closeDB();
             File pdfOut = new File(pathout + username + new DateTime().toString("ddMMyyyyHHmmSSS") + ".A.pdf");
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfIn.getPath()), new PdfWriter(baos));
-            Document doc = new Document(pdfDoc);
-            PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
-            Map<String, PdfFormField> fields = form.getFormFields();
-            String luogo = "";
-            String sesso = "";
-            for (int i = 0; i < listaCampiReg.size(); i++) {
-                for (int j = 0; j < listavalori.size(); j++) {
+            try (PdfDocument pdfDoc = new PdfDocument(new PdfReader(pdfIn.getPath()), new PdfWriter(baos))) {
+                Document doc = new Document(pdfDoc);
+                PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, false);
+                Map<String, PdfFormField> fields = form.getFormFields();
+                String luogo = "";
+                String sesso = "";
+                for (int i = 0; i < listaCampiReg.size(); i++) {
+                    for (int j = 0; j < listavalori.size(); j++) {
 //                    System.out.println(listavalori.get(j).getCampo());
-                    if (listaCampiReg.get(i).getCampo().equals(listavalori.get(j).getCampo())) {
-                        String valore = listavalori.get(j).getValore().trim();
-                        if (valore.equals("")) {
-                            valore = " ";
+                        if (listaCampiReg.get(i).getCampo().equals(listavalori.get(j).getCampo())) {
+                            String valore = listavalori.get(j).getValore().trim();
+                            if (valore.equals("")) {
+                                valore = " ";
+                            }
+                            if (listavalori.get(j).getCampo().equals("residente")) {
+                                luogo = valore;
+                            }
+                            if (listavalori.get(j).getCampo().equals("sesso")) {
+                                sesso = valore;
+                            }
+                            if (listavalori.get(j).getCampo().equals("sedecomune")) {
+                                luogo = valore;
+                            }
+                            if (listavalori.get(j).getCampo().equals("comuni")) {
+                                valore = ActionB.comune(bandorif, username)[1];
+                            }
+
+                            String txt = listaCampiReg.get(i).getCampo().trim();
+                            String temp[] = {txt, valore.toUpperCase()};
+                            elencodati.add(temp);
+                            break;
                         }
-                        if (listavalori.get(j).getCampo().equals("residente")) {
-                            luogo = valore;
-                        }
-                        if (listavalori.get(j).getCampo().equals("sesso")) {
-                            sesso = valore;
-                        }
-                        if (listavalori.get(j).getCampo().equals("sedecomune")) {
-                            luogo = valore;
-                        }
-                        if (listavalori.get(j).getCampo().equals("comuni")) {
-                            valore = ActionB.comune(bandorif, username)[1];
-                        }
-                        
-                        String txt = listaCampiReg.get(i).getCampo().trim();
-                        String temp[] = {txt, valore.toUpperCase()};
-                        elencodati.add(temp);
-                        break;
                     }
                 }
-            }
-            for (int i = 0; i < elencodati.size(); i++) {
-                String[] t = elencodati.get(i);
-                String nome = t[0];
-                String valore = t[1];
-                if (fields.containsKey(nome)) {
-                    fields.get(nome).setValue(valore);
-                    form.partialFormFlattening(nome);
-                }
+                for (int i = 0; i < elencodati.size(); i++) {
+                    String[] t = elencodati.get(i);
+                    String nome = t[0];
+                    String valore = t[1];
+                    if (fields.containsKey(nome)) {
+                        fields.get(nome).setValue(valore);
+                        form.partialFormFlattening(nome);
+                    }
 //                if(nome.equals("societa")){
 //                    form.getField("societa2").setValue(valore);
 //                }
 //                System.out.println(valore);
+                }
+                form.getField("dataoggi").setValue(luogo + " " + new DateTime().toString("dd/MM/yyyy"));
+                form.partialFormFlattening("dataoggi");
+                form.flattenFields();
+                doc.close();
             }
-            form.getField("dataoggi").setValue(luogo + " " +new DateTime().toString("dd/MM/yyyy"));
-            form.partialFormFlattening("dataoggi");
-            form.flattenFields();
-            doc.close();
-            pdfDoc.close();
             FileUtils.writeByteArrayToFile(pdfOut, baos.toByteArray());
             if (checkPDF(pdfOut)) {
                 File pdfqr = new File(pdfOut.getPath() + ".qr.pdf");
@@ -405,23 +405,23 @@ public class Pdf_new {
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(template), new PdfWriter(out));
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             String var_nome = "";
-            String nome = listavalori.stream().filter(va -> va.getCampo().equals("nome")).findAny().map(va -> va.getValore()).get();
-            String cognome = listavalori.stream().filter(va -> va.getCampo().equals("cognome")).findAny().map(va -> va.getValore()).get();
-            String nato = listavalori.stream().filter(va -> va.getCampo().equals("nato")).findAny().map(va -> va.getValore()).get();
-            String data = listavalori.stream().filter(va -> va.getCampo().equals("data")).findAny().map(va -> va.getValore()).get();
-            String caricasoc = listavalori.stream().filter(va -> va.getCampo().equals("caricasoc")).findAny().map(va -> va.getValore()).get();
-            String societa = listavalori.stream().filter(va -> va.getCampo().equals("societa")).findAny().map(va -> va.getValore()).get();
-            String sedecomune = listavalori.stream().filter(va -> va.getCampo().equals("sedecomune")).findAny().map(va -> va.getValore()).get();
-            String sedeprov = listavalori.stream().filter(va -> va.getCampo().equals("sedeprov")).findAny().map(va -> va.getValore()).get();
-            String sedeindirizzo = listavalori.stream().filter(va -> va.getCampo().equals("sedeindirizzo")).findAny().map(va -> va.getValore()).get();
-            String sedecap = listavalori.stream().filter(va -> va.getCampo().equals("sedecap")).findAny().map(va -> va.getValore()).get();
-            String comunecciaa = listavalori.stream().filter(va -> va.getCampo().equals("comunecciaa")).findAny().map(va -> va.getValore()).get();
-            String proccciaa = listavalori.stream().filter(va -> va.getCampo().equals("proccciaa")).findAny().map(va -> va.getValore()).get();
-            String pec = listavalori.stream().filter(va -> va.getCampo().equals("pec")).findAny().map(va -> va.getValore()).get();
-            String matricolainps = listavalori.stream().filter(va -> va.getCampo().equals("matricolainps")).findAny().map(va -> va.getValore()).get();
-            String piva = listavalori.stream().filter(va -> va.getCampo().equals("piva")).findAny().map(va -> va.getValore()).get();
-            String rea = listavalori.stream().filter(va -> va.getCampo().equals("rea")).findAny().map(va -> va.getValore()).get();
-            String cf = listavalori.stream().filter(va -> va.getCampo().equals("cf")).findAny().map(va -> va.getValore()).get();
+            String nome = listavalori.stream().filter(va  -> va.getCampo().equals("nome")).findAny().map(va  -> va.getValore()).get();
+            String cognome = listavalori.stream().filter(va  -> va.getCampo().equals("cognome")).findAny().map(va  -> va.getValore()).get();
+            String nato = listavalori.stream().filter(va  -> va.getCampo().equals("nato")).findAny().map(va  -> va.getValore()).get();
+            String data = listavalori.stream().filter(va  -> va.getCampo().equals("data")).findAny().map(va  -> va.getValore()).get();
+            String caricasoc = listavalori.stream().filter(va  -> va.getCampo().equals("caricasoc")).findAny().map(va  -> va.getValore()).get();
+            String societa = listavalori.stream().filter(va  -> va.getCampo().equals("societa")).findAny().map(va  -> va.getValore()).get();
+            String sedecomune = listavalori.stream().filter(va  -> va.getCampo().equals("sedecomune")).findAny().map(va  -> va.getValore()).get();
+            String sedeprov = listavalori.stream().filter(va  -> va.getCampo().equals("sedeprov")).findAny().map(va  -> va.getValore()).get();
+            String sedeindirizzo = listavalori.stream().filter(va  -> va.getCampo().equals("sedeindirizzo")).findAny().map(va  -> va.getValore()).get();
+            String sedecap = listavalori.stream().filter(va  -> va.getCampo().equals("sedecap")).findAny().map(va  -> va.getValore()).get();
+            String comunecciaa = listavalori.stream().filter(va  -> va.getCampo().equals("comunecciaa")).findAny().map(va  -> va.getValore()).get();
+            String proccciaa = listavalori.stream().filter(va  -> va.getCampo().equals("proccciaa")).findAny().map(va  -> va.getValore()).get();
+            String pec = listavalori.stream().filter(va  -> va.getCampo().equals("pec")).findAny().map(va  -> va.getValore()).get();
+            String matricolainps = listavalori.stream().filter(va  -> va.getCampo().equals("matricolainps")).findAny().map(va  -> va.getValore()).get();
+            String piva = listavalori.stream().filter(va  -> va.getCampo().equals("piva")).findAny().map(va  -> va.getValore()).get();
+            String rea = listavalori.stream().filter(va  -> va.getCampo().equals("rea")).findAny().map(va  -> va.getValore()).get();
+            String cf = listavalori.stream().filter(va  -> va.getCampo().equals("cf")).findAny().map(va  -> va.getValore()).get();
 
             for (int i = 0; i < listavalori.size(); i++) {
                 if (listavalori.get(i).getCampo().equals("nome")) {
@@ -583,23 +583,23 @@ public class Pdf_new {
             PdfDocument pdfDoc = new PdfDocument(new PdfReader(template), new PdfWriter(out));
             PdfAcroForm form = PdfAcroForm.getAcroForm(pdfDoc, true);
             String var_nome = "";
-            String nome = listavalori.stream().filter(va -> va.getCampo().equals("nome")).findAny().map(va -> va.getValore()).get();
-            String cognome = listavalori.stream().filter(va -> va.getCampo().equals("cognome")).findAny().map(va -> va.getValore()).get();
-            String nato = listavalori.stream().filter(va -> va.getCampo().equals("nato")).findAny().map(va -> va.getValore()).get();
-            String data = listavalori.stream().filter(va -> va.getCampo().equals("data")).findAny().map(va -> va.getValore()).get();
-            String caricasoc = listavalori.stream().filter(va -> va.getCampo().equals("caricasoc")).findAny().map(va -> va.getValore()).get();
-            String societa = listavalori.stream().filter(va -> va.getCampo().equals("societa")).findAny().map(va -> va.getValore()).get();
-            String sedecomune = listavalori.stream().filter(va -> va.getCampo().equals("sedecomune")).findAny().map(va -> va.getValore()).get();
-            String sedeprov = listavalori.stream().filter(va -> va.getCampo().equals("sedeprov")).findAny().map(va -> va.getValore()).get();
-            String sedeindirizzo = listavalori.stream().filter(va -> va.getCampo().equals("sedeindirizzo")).findAny().map(va -> va.getValore()).get();
-            String sedecap = listavalori.stream().filter(va -> va.getCampo().equals("sedecap")).findAny().map(va -> va.getValore()).get();
-            String comunecciaa = listavalori.stream().filter(va -> va.getCampo().equals("comunecciaa")).findAny().map(va -> va.getValore()).get();
-            String proccciaa = listavalori.stream().filter(va -> va.getCampo().equals("proccciaa")).findAny().map(va -> va.getValore()).get();
-            String pec = listavalori.stream().filter(va -> va.getCampo().equals("pec")).findAny().map(va -> va.getValore()).get();
-            String matricolainps = listavalori.stream().filter(va -> va.getCampo().equals("matricolainps")).findAny().map(va -> va.getValore()).get();
-            String piva = listavalori.stream().filter(va -> va.getCampo().equals("piva")).findAny().map(va -> va.getValore()).get();
-            String rea = listavalori.stream().filter(va -> va.getCampo().equals("rea")).findAny().map(va -> va.getValore()).get();
-            String cf = listavalori.stream().filter(va -> va.getCampo().equals("cf")).findAny().map(va -> va.getValore()).get();
+            String nome = listavalori.stream().filter(va  -> va.getCampo().equals("nome")).findAny().map(va  -> va.getValore()).get();
+            String cognome = listavalori.stream().filter(va  -> va.getCampo().equals("cognome")).findAny().map(va  -> va.getValore()).get();
+            String nato = listavalori.stream().filter(va  -> va.getCampo().equals("nato")).findAny().map(va  -> va.getValore()).get();
+            String data = listavalori.stream().filter(va  -> va.getCampo().equals("data")).findAny().map(va  -> va.getValore()).get();
+            String caricasoc = listavalori.stream().filter(va  -> va.getCampo().equals("caricasoc")).findAny().map(va  -> va.getValore()).get();
+            String societa = listavalori.stream().filter(va  -> va.getCampo().equals("societa")).findAny().map(va  -> va.getValore()).get();
+            String sedecomune = listavalori.stream().filter(va  -> va.getCampo().equals("sedecomune")).findAny().map(va  -> va.getValore()).get();
+            String sedeprov = listavalori.stream().filter(va  -> va.getCampo().equals("sedeprov")).findAny().map(va  -> va.getValore()).get();
+            String sedeindirizzo = listavalori.stream().filter(va  -> va.getCampo().equals("sedeindirizzo")).findAny().map(va  -> va.getValore()).get();
+            String sedecap = listavalori.stream().filter(va  -> va.getCampo().equals("sedecap")).findAny().map(va  -> va.getValore()).get();
+            String comunecciaa = listavalori.stream().filter(va  -> va.getCampo().equals("comunecciaa")).findAny().map(va  -> va.getValore()).get();
+            String proccciaa = listavalori.stream().filter(va  -> va.getCampo().equals("proccciaa")).findAny().map(va  -> va.getValore()).get();
+            String pec = listavalori.stream().filter(va  -> va.getCampo().equals("pec")).findAny().map(va  -> va.getValore()).get();
+            String matricolainps = listavalori.stream().filter(va  -> va.getCampo().equals("matricolainps")).findAny().map(va  -> va.getValore()).get();
+            String piva = listavalori.stream().filter(va  -> va.getCampo().equals("piva")).findAny().map(va  -> va.getValore()).get();
+            String rea = listavalori.stream().filter(va  -> va.getCampo().equals("rea")).findAny().map(va  -> va.getValore()).get();
+            String cf = listavalori.stream().filter(va  -> va.getCampo().equals("cf")).findAny().map(va  -> va.getValore()).get();
             //String comunecarica = listavalori.stream().filter(va -> va.getCampo().equals("domiciliocarica")).findAny().map(va -> va.getValore()).get();
 
             for (int i = 0; i < listavalori.size(); i++) {
@@ -713,7 +713,7 @@ public class Pdf_new {
                         form.getField("dipendente5").setValue("X");
                     }
                 }
-                form.getField("dataoggi").setValue(sedecomune + " " +  new DateTime().toString("dd/MM/yyyy"));
+                form.getField("dataoggi").setValue(sedecomune + " " + new DateTime().toString("dd/MM/yyyy"));
                 form.flattenFields();//chiude il documento
                 pdfDoc.close();
                 return out;
